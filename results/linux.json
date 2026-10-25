@@ -1,0 +1,767 @@
+{
+  "schema_version": 1,
+  "python": "3.14.4",
+  "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+  "seed": 7,
+  "repetitions": 10,
+  "logical_time": 1800000000,
+  "source_sha256": {
+    "policy.py": "a838fa7476c5442c4b2a4fde66dc1cc62e93081537914d75bf5b5e7e73772387",
+    "server.py": "d084924341c6708adf8fdfcd3a276327d698349c1f4248ce2f3321d82f247e6f",
+    "run_experiments.py": "8ed7aa1fc98a9068eac98d42c36d79d2f45e74d7bc2fd1fb1efe79cfe0c02432"
+  },
+  "passed": 60,
+  "total": 60,
+  "scenarios": [
+    {
+      "name": "valid",
+      "observed": {
+        "200:accepted": 1
+      },
+      "expected": {
+        "200:accepted": 1
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "valid_explicit_port",
+      "observed": {
+        "200:accepted": 1
+      },
+      "expected": {
+        "200:accepted": 1
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "tampered_signature",
+      "observed": {
+        "401:authentication": 1
+      },
+      "expected": {
+        "401:authentication": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "non_ascii_signature",
+      "observed": {
+        "401:authentication": 1
+      },
+      "expected": {
+        "401:authentication": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "forged_key_id",
+      "observed": {
+        "401:authentication": 1
+      },
+      "expected": {
+        "401:authentication": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "cross_device",
+      "observed": {
+        "403:scope": 1
+      },
+      "expected": {
+        "403:scope": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "cross_device_without_scope",
+      "observed": {
+        "200:accepted": 1
+      },
+      "expected": {
+        "200:accepted": 1
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "unknown_tool",
+      "observed": {
+        "403:tool": 1
+      },
+      "expected": {
+        "403:tool": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "bad_json",
+      "observed": {
+        "400:schema": 1
+      },
+      "expected": {
+        "400:schema": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "non_object",
+      "observed": {
+        "400:schema": 1
+      },
+      "expected": {
+        "400:schema": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "duplicate_json_key",
+      "observed": {
+        "400:schema": 1
+      },
+      "expected": {
+        "400:schema": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "boolean_timestamp",
+      "observed": {
+        "400:schema": 1
+      },
+      "expected": {
+        "400:schema": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "invalid_utf8",
+      "observed": {
+        "400:schema": 1
+      },
+      "expected": {
+        "400:schema": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "oversize",
+      "observed": {
+        "413:body_size": 1
+      },
+      "expected": {
+        "413:body_size": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "wrong_content_type",
+      "observed": {
+        "415:content_type": 1
+      },
+      "expected": {
+        "415:content_type": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "stale",
+      "observed": {
+        "403:freshness": 1
+      },
+      "expected": {
+        "403:freshness": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "future",
+      "observed": {
+        "403:freshness": 1
+      },
+      "expected": {
+        "403:freshness": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "stale_without_freshness",
+      "observed": {
+        "200:accepted": 1
+      },
+      "expected": {
+        "200:accepted": 1
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "url_00",
+      "observed": {
+        "403:url": 1
+      },
+      "expected": {
+        "403:url": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "url_01",
+      "observed": {
+        "403:url": 1
+      },
+      "expected": {
+        "403:url": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "url_02",
+      "observed": {
+        "403:url": 1
+      },
+      "expected": {
+        "403:url": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "url_03",
+      "observed": {
+        "403:url": 1
+      },
+      "expected": {
+        "403:url": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "url_04",
+      "observed": {
+        "403:url": 1
+      },
+      "expected": {
+        "403:url": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "url_05",
+      "observed": {
+        "403:url": 1
+      },
+      "expected": {
+        "403:url": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "url_06",
+      "observed": {
+        "403:url": 1
+      },
+      "expected": {
+        "403:url": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "url_07",
+      "observed": {
+        "403:url": 1
+      },
+      "expected": {
+        "403:url": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "url_08",
+      "observed": {
+        "403:url": 1
+      },
+      "expected": {
+        "403:url": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "url_09",
+      "observed": {
+        "403:url": 1
+      },
+      "expected": {
+        "403:url": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "url_10",
+      "observed": {
+        "403:url": 1
+      },
+      "expected": {
+        "403:url": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "url_without_gate",
+      "observed": {
+        "200:accepted": 1
+      },
+      "expected": {
+        "200:accepted": 1
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "duplicate_length",
+      "observed": {
+        "400:framing": 1
+      },
+      "expected": {
+        "400:framing": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "chunked_framing",
+      "observed": {
+        "400:framing": 1
+      },
+      "expected": {
+        "400:framing": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "negative_length",
+      "observed": {
+        "400:framing": 1
+      },
+      "expected": {
+        "400:framing": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "sequential_replay",
+      "observed": {
+        "200:accepted": 1,
+        "409:replay": 1
+      },
+      "expected": {
+        "200:accepted": 1,
+        "409:replay": 1
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "replay_disabled",
+      "observed": {
+        "200:accepted": 2
+      },
+      "expected": {
+        "200:accepted": 2
+      },
+      "effects": 2,
+      "expected_effects": 2,
+      "passed": true
+    },
+    {
+      "name": "rate_limit",
+      "observed": {
+        "200:accepted": 3,
+        "429:rate": 1
+      },
+      "expected": {
+        "200:accepted": 3,
+        "429:rate": 1
+      },
+      "effects": 3,
+      "expected_effects": 3,
+      "passed": true
+    },
+    {
+      "name": "rate_disabled",
+      "observed": {
+        "200:accepted": 4
+      },
+      "expected": {
+        "200:accepted": 4
+      },
+      "effects": 4,
+      "expected_effects": 4,
+      "passed": true
+    },
+    {
+      "name": "concurrent_atomic_00",
+      "observed": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "expected": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "concurrent_disabled_00",
+      "observed": {
+        "200:accepted": 8
+      },
+      "expected": {
+        "200:accepted": 8
+      },
+      "effects": 8,
+      "expected_effects": 8,
+      "passed": true
+    },
+    {
+      "name": "concurrent_atomic_01",
+      "observed": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "expected": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "concurrent_disabled_01",
+      "observed": {
+        "200:accepted": 8
+      },
+      "expected": {
+        "200:accepted": 8
+      },
+      "effects": 8,
+      "expected_effects": 8,
+      "passed": true
+    },
+    {
+      "name": "concurrent_atomic_02",
+      "observed": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "expected": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "concurrent_disabled_02",
+      "observed": {
+        "200:accepted": 8
+      },
+      "expected": {
+        "200:accepted": 8
+      },
+      "effects": 8,
+      "expected_effects": 8,
+      "passed": true
+    },
+    {
+      "name": "concurrent_atomic_03",
+      "observed": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "expected": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "concurrent_disabled_03",
+      "observed": {
+        "200:accepted": 8
+      },
+      "expected": {
+        "200:accepted": 8
+      },
+      "effects": 8,
+      "expected_effects": 8,
+      "passed": true
+    },
+    {
+      "name": "concurrent_atomic_04",
+      "observed": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "expected": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "concurrent_disabled_04",
+      "observed": {
+        "200:accepted": 8
+      },
+      "expected": {
+        "200:accepted": 8
+      },
+      "effects": 8,
+      "expected_effects": 8,
+      "passed": true
+    },
+    {
+      "name": "concurrent_atomic_05",
+      "observed": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "expected": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "concurrent_disabled_05",
+      "observed": {
+        "200:accepted": 8
+      },
+      "expected": {
+        "200:accepted": 8
+      },
+      "effects": 8,
+      "expected_effects": 8,
+      "passed": true
+    },
+    {
+      "name": "concurrent_atomic_06",
+      "observed": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "expected": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "concurrent_disabled_06",
+      "observed": {
+        "200:accepted": 8
+      },
+      "expected": {
+        "200:accepted": 8
+      },
+      "effects": 8,
+      "expected_effects": 8,
+      "passed": true
+    },
+    {
+      "name": "concurrent_atomic_07",
+      "observed": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "expected": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "concurrent_disabled_07",
+      "observed": {
+        "200:accepted": 8
+      },
+      "expected": {
+        "200:accepted": 8
+      },
+      "effects": 8,
+      "expected_effects": 8,
+      "passed": true
+    },
+    {
+      "name": "concurrent_atomic_08",
+      "observed": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "expected": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "concurrent_disabled_08",
+      "observed": {
+        "200:accepted": 8
+      },
+      "expected": {
+        "200:accepted": 8
+      },
+      "effects": 8,
+      "expected_effects": 8,
+      "passed": true
+    },
+    {
+      "name": "concurrent_atomic_09",
+      "observed": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "expected": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "concurrent_disabled_09",
+      "observed": {
+        "200:accepted": 8
+      },
+      "expected": {
+        "200:accepted": 8
+      },
+      "effects": 8,
+      "expected_effects": 8,
+      "passed": true
+    },
+    {
+      "name": "future_nonce_retention",
+      "observed": {
+        "200:accepted": 1,
+        "403:freshness": 1,
+        "409:replay": 1
+      },
+      "expected": {
+        "200:accepted": 1,
+        "403:freshness": 1,
+        "409:replay": 1
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "rate_recovery_and_principal_isolation",
+      "observed": {
+        "200:accepted": 5,
+        "429:rate": 1
+      },
+      "expected": {
+        "200:accepted": 5,
+        "429:rate": 1
+      },
+      "effects": 5,
+      "expected_effects": 5,
+      "passed": true
+    },
+    {
+      "name": "known_limitation_restart_replay",
+      "observed": {
+        "200:accepted": 2
+      },
+      "expected": {
+        "200:accepted": 2
+      },
+      "effects": 2,
+      "expected_effects": 2,
+      "passed": true
+    }
+  ]
+}
