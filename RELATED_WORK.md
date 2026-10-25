@@ -1,19 +1,19 @@
-# Reading connections and attribution
+# Reading references
 
-These notes identify methodological connections. No external code or dataset is incorporated, and neither paper's results have been reproduced here.
+## KernJC (RAID 2024)
 
-## KernJC, RAID 2024
+Bonan Ruan, Jiahao Liu, Chuqi Zhang and Zhenkai Liang, [KernJC: Automated Vulnerable Environment Generation for Linux Kernel Vulnerabilities](https://arxiv.org/html/2404.11107v2).
 
-Bonan Ruan, Jiahao Liu, Chuqi Zhang and Zhenkai Liang, [KernJC: Automated Vulnerable Environment Generation for Linux Kernel Vulnerabilities](https://arxiv.org/html/2404.11107v2). Preparation reading covered the introduction, version/configuration identification, evaluation and discussion.
+KernJC treats the environment needed to expose a vulnerability as part of the reproduction problem. Its patch and configuration analysis is a different task from this lab. The relevant lesson here is to retain the source and configuration alongside an observed result. The preparation notes used its introduction, method, evaluation and discussion; no kernel experiments were reproduced.
 
-The paper separates constructing an environment that contains and exposes a vulnerability from triggering it. Patch checks address inaccurate version labels; configuration analysis addresses hidden prerequisites. Its discussion distinguishes reproduction from exploitability. The useful lesson for this much smaller lab is to record the executable environment and policy configuration alongside each observed outcome. Its Linux-kernel technique and evaluation are separate work; this lab does not implement them.
+## Forky (ICSE 2025)
 
-## Forky, ICSE 2025
+Won Hoi Kim et al., [Fork State-Aware Differential Fuzzing for Blockchain Consensus Implementations](https://conf.researchr.org/details/icse-2025/icse-2025-research-track/145/Fork-State-Aware-Differential-Fuzzing-for-Blockchain-Consensus-Implementations).
 
-Won Hoi Kim et al., [Fork State-Aware Differential Fuzzing for Blockchain Consensus Implementations](https://conf.researchr.org/details/icse-2025/icse-2025-research-track/145/Fork-State-Aware-Differential-Fuzzing-for-Blockchain-Consensus-Implementations). Preparation reading was limited to the official conference abstract and author list; the full paper was unavailable through the attempted author-hosted links.
+Only the official conference abstract and author list were available during preparation. It describes comparing implementation behavior across fork states. This lab has no consensus implementation, fork exploration or Forky feedback mechanism.
 
-The abstract motivates comparing implementation behavior across fork states because ordinary coverage can miss relevant distinctions. The broad connection is to exposing state-dependent behavior and comparing outcomes. This lab does not implement fork exploration, a consensus protocol, differential fuzzing or Forky's feedback mechanism.
+## Python documentation
 
-## Standard-library implementation references
-
-Python [http.server](https://docs.python.org/3/library/http.server.html), [hmac](https://docs.python.org/3/library/hmac.html) and [urllib.parse](https://docs.python.org/3/library/urllib.parse.html) describe the transport, authentication primitive and URL parser used here. In particular, the HTTP server is an experiment transport, not a recommended production deployment.
+1. [http.server](https://docs.python.org/3/library/http.server.html), the local test transport and its deployment limitations.
+2. [hmac](https://docs.python.org/3/library/hmac.html), signing request bytes and comparing digests.
+3. [urllib.parse](https://docs.python.org/3/library/urllib.parse.html), parsing the URL field. Parsing alone does not validate a network destination.

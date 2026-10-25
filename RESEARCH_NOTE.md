@@ -1,29 +1,30 @@
-# Admission checks under concurrent duplicate delivery
+# Experiment notes
 
-## Problem
+The useful observation here is the number of recorded actions, not just the HTTP status. Eight duplicate requests can all look reasonable individually while still causing the same action eight times.
 
-A rejected request and an absent action are different observations. Can a small, repeatable HTTP experiment show both the admission decision and the number of actions recorded when security checks interact?
+## Setup
 
-## Failure model
+Requests are signed with HMAC-SHA256 using public fixture keys. The server checks the exact request bytes, JSON schema, tool name, resource permission and URL string. Freshness, replay admission, rate admission and the recording action happen under the same lock.
 
-The sender can submit malformed traffic, alter authentication headers, replay signed requests, send concurrent duplicates and use its own valid credential against an unauthorized resource. The service, clock fixture and experiment runner are trusted. Keys are public synthetic fixtures. This models policy logic under controlled delivery, rather than cryptographic key theft or a hostile host.
+The runner sends actual HTTP requests over loopback. It uses a fixed logical clock for the boundary cases and an eight-worker barrier for concurrent delivery. It checks both response counts and the length of the recording list. Weakened variants are passed directly to `Policy`; there is no HTTP option to disable a check.
 
-## Setup and measurements
+## What the runs showed
 
-A standard-library Python HTTP server authenticates the exact request bytes with HMAC-SHA256, validates a strict schema and checks tool, device and URL policy. A lock covers freshness, nonce admission, rate admission and insertion into a recording sink. Independent HTTP connections exercise the service. No external system receives traffic.
+Both committed runs matched all 60 expected cases. They contain the same observations and source hashes, despite using different Python versions and operating systems.
 
-The runner records response counts and actual recording-list lengths against explicit expected outcomes. It compares the full policy to weakened variants, repeats eight-client duplicate delivery ten times and advances a logical clock through rate and freshness boundaries. Source hashes and environment metadata accompany the evidence.
+1. With the lock and replay check, each concurrent trial recorded one action for eight copies. Removing replay and rate checks recorded eight.
+2. A rate-limited request could retry after the two-second window. Rejected requests did not consume their request ID.
+3. A request dated 30 seconds into the future was still rejected as a duplicate 60 seconds later. This is why nonce retention is 61 seconds, rather than 30.
+4. Creating a fresh server admitted the same request again. The replay guarantee only lasts for the life of one `Policy` instance.
 
-## Results
+The URL tests only check strings. There is no DNS resolution or fetch, so a rejection of a metadata-address URL doesn't establish resistance to SSRF in a real HTTP client.
 
-Both native Windows and Ubuntu under WSL matched all 60 expected scenario outcomes. In each concurrent trial, the full policy recorded one action for eight copies. With replay and rate checks removed, the same workload recorded eight. Scope, freshness, rate and URL ablations each admitted the violation that their corresponding full-policy case rejected. Rejected malformed and unauthenticated inputs recorded no action.
+## A Windows issue during setup
 
-One intentionally measured limitation is important: recreating the service admits the same still-fresh request again because replay memory is lost. An outcome match in that case records the weakness; it is not a successful defense.
+An early oversized-body case returned `ConnectionAbortedError` instead of the expected HTTP rejection. The server closed a connection with unread request data. Flushing the response and shutting down the write side before closing fixed that case on the tested Windows host. The framing and oversized-body cases remain in the runner.
 
-## Limits
+## Next useful change
 
-This is a synthetic admission experiment, not a reproduction of a published system or a security benchmark. The sink has no external effects. TLS, DNS, redirects, broker behavior, crash consistency, multiple service processes and hardware remain outside its scope. Scheduling is uncontrolled; timing and throughput are not benchmarked. Docker files exist, but container execution is unverified. Passing the corpus does not prove absence of other bugs.
+The main missing piece is persistence. A useful follow-on experiment would store request IDs and actions in one transaction, then repeat the duplicate workload across restarts and two service processes. Recording a nonce before an external action is not enough to establish exactly-once delivery if the process can crash between them.
 
-## Next experiment
-
-Replace the recording sink and nonce state with one transactional durable ledger. Repeat the duplicate workload across two server processes and forced restarts. Specify the point at which an action becomes durable before claiming delivery semantics.
+No throughput or scheduling benchmark was run. The sink is still a list, the clocks are controlled, and the container route has not been checked. The committed results cover the listed cases only.
