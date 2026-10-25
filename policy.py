@@ -42,19 +42,24 @@ class Decision:
 
 
 class Policy:
-    """Atomic replay/rate admission with an in-memory, non-network recording sink.
+    """Policy admission with an in-memory sink or an injected local ledger.
 
     `disabled` is for deliberate one-check ablations in the runner, never exposed
-    by the HTTP handler. No security or persistence claim beyond this process.
+    by the HTTP handler. Neither sink performs an external action.
     """
 
-    def __init__(self, clock=time.time, disabled=frozenset()):
+    def __init__(self, clock=time.time, disabled=frozenset(), ledger=None):
         self.clock = clock
         self.disabled = frozenset(disabled)
         self.lock = threading.Lock()
         self.seen = {}
         self.windows = {key: deque() for key in KEYS}
-        self.effects = []
+        self.ledger = ledger
+        self._effects = []
+
+    @property
+    def effects(self):
+        return self.ledger.effects if self.ledger is not None else self._effects
 
     def execute(self, raw: bytes, key_id: str, signature: str) -> Decision:
         if len(raw) > MAX_BODY:
@@ -73,6 +78,7 @@ class Policy:
         if (not isinstance(obj["request_id"], str)
                 or re.fullmatch(r"[a-zA-Z0-9_-]{1,64}", obj["request_id"]) is None
                 or type(obj["timestamp"]) is not int
+                or not -(2 ** 63) <= obj["timestamp"] < 2 ** 63
                 or any(not isinstance(obj[k], str) for k in ("tool", "resource", "url", "value"))
                 or len(obj["value"]) > 256):
             return Decision(400, "schema")
@@ -93,6 +99,8 @@ class Policy:
             allowed_url = False
         if "url" not in self.disabled and not allowed_url:
             return Decision(403, "url")
+        if self.ledger is not None:
+            return self.ledger.admit(obj, key_id, self.clock, self.disabled)
         with self.lock:
             now = self.clock()
             if "freshness" not in self.disabled and abs(now - obj["timestamp"]) > 30:
@@ -110,6 +118,6 @@ class Policy:
             # request. Rejected requests do not consume the replay/rate budget.
             self.seen[nonce] = now + 61
             window.append(now)
-            self.effects.append({"key_id": key_id, "request_id": obj["request_id"],
-                                 "resource": obj["resource"], "value": obj["value"]})
+            self._effects.append({"key_id": key_id, "request_id": obj["request_id"],
+                                  "resource": obj["resource"], "value": obj["value"]})
         return Decision(200, "accepted")

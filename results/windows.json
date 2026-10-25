@@ -6,12 +6,13 @@
   "repetitions": 10,
   "logical_time": 1800000000,
   "source_sha256": {
-    "policy.py": "a838fa7476c5442c4b2a4fde66dc1cc62e93081537914d75bf5b5e7e73772387",
-    "server.py": "d084924341c6708adf8fdfcd3a276327d698349c1f4248ce2f3321d82f247e6f",
-    "run_experiments.py": "8ed7aa1fc98a9068eac98d42c36d79d2f45e74d7bc2fd1fb1efe79cfe0c02432"
+    "policy.py": "8eab4917aaf531c831e7a1fde52321d8f18f7e6f37edacaedbdf8118b104ba51",
+    "server.py": "6767544e01ee24dcec80533cf1e1309b779745d64e03b4484724b27d75171af0",
+    "ledger.py": "3ccc4c2158e3a507855fd06e9270fdb38a2a6553c9c999440eae36b6321e8d8a",
+    "run_experiments.py": "0c59e44a869b748f4e2a0a3f44028fcea54678c55cb635d5d4248d81a20019d9"
   },
-  "passed": 60,
-  "total": 60,
+  "passed": 61,
+  "total": 61,
   "scenarios": [
     {
       "name": "valid",
@@ -147,6 +148,18 @@
     },
     {
       "name": "boolean_timestamp",
+      "observed": {
+        "400:schema": 1
+      },
+      "expected": {
+        "400:schema": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    },
+    {
+      "name": "oversized_integer_timestamp",
       "observed": {
         "400:schema": 1
       },

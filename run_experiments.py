@@ -80,6 +80,7 @@ def run(seed, repetitions):
     case("non_object", b'[]', "400:schema")
     case("duplicate_json_key", request()[:-1] + b',"tool":"emit"}', "400:schema")
     case("boolean_timestamp", request(timestamp=True), "400:schema")
+    case("oversized_integer_timestamp", request(timestamp=10 ** 1000), "400:schema")
     case("invalid_utf8", b'\xff', "400:schema")
     case("oversize", b'x' * (MAX_BODY + 1), "413:body_size")
     case("wrong_content_type", request(), "415:content_type", headers={"Content-Type": "text/plain"})
@@ -186,7 +187,7 @@ def main():
     if not 1 <= args.repetitions <= 100:
         parser.error("repetitions must be between 1 and 100")
     rows = run(args.seed, args.repetitions)
-    files = ("policy.py", "server.py", "run_experiments.py")
+    files = ("policy.py", "server.py", "ledger.py", "run_experiments.py")
     hashes = {f: hashlib.sha256(Path(__file__).with_name(f).read_bytes()).hexdigest() for f in files}
     data = dict(schema_version=1, python=sys.version.split()[0], platform=platform.platform(),
                 seed=args.seed, repetitions=args.repetitions, logical_time=NOW, source_sha256=hashes,

@@ -17,3 +17,7 @@ Only the official conference abstract and author list were available during prep
 1. [http.server](https://docs.python.org/3/library/http.server.html), the local test transport and its deployment limitations.
 2. [hmac](https://docs.python.org/3/library/hmac.html), signing request bytes and comparing digests.
 3. [urllib.parse](https://docs.python.org/3/library/urllib.parse.html), parsing the URL field. Parsing alone does not validate a network destination.
+
+## SQLite transactions
+
+Python's [sqlite3 transaction control](https://docs.python.org/3/library/sqlite3.html#transaction-control), SQLite's [transaction modes](https://www.sqlite.org/lang_transaction.html) and [atomic commit description](https://www.sqlite.org/atomiccommit.html) explain the persistence experiment. `BEGIN IMMEDIATE` acquires the writer before the state checks. The crash cases exercise two process-exit boundaries; they don't independently validate SQLite's behavior under every hardware/filesystem failure discussed in those references.

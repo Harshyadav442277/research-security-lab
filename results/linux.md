@@ -16,6 +16,7 @@ Known-limit and ablation rows pass when the deliberately weak behavior is observ
 | non_object | 400:schema x1 | 0 | 0 | yes |
 | duplicate_json_key | 400:schema x1 | 0 | 0 | yes |
 | boolean_timestamp | 400:schema x1 | 0 | 0 | yes |
+| oversized_integer_timestamp | 400:schema x1 | 0 | 0 | yes |
 | invalid_utf8 | 400:schema x1 | 0 | 0 | yes |
 | oversize | 413:body_size x1 | 0 | 0 | yes |
 | wrong_content_type | 415:content_type x1 | 0 | 0 | yes |

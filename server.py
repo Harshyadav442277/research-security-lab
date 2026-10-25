@@ -1,8 +1,12 @@
 """Loopback HTTP transport for the controlled policy experiment."""
+import argparse
 import json
 import socket
+import sqlite3
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
 from policy import MAX_BODY, Policy
+from ledger import SQLiteLedger
 
 
 class Server(ThreadingHTTPServer):
@@ -54,13 +58,28 @@ def make_server(policy: Policy, port: int = 0):
                 return self.reply(400, "incomplete_body")
             if len(raw) != size:
                 return self.reply(400, "incomplete_body")
-            decision = policy.execute(raw, self.headers["X-Key-Id"], self.headers["X-Signature"])
+            try:
+                decision = policy.execute(raw, self.headers["X-Key-Id"], self.headers["X-Signature"])
+            except sqlite3.Error:
+                # Do not fall back to an empty memory cache when the database
+                # is unavailable: that would forget already accepted IDs.
+                return self.reply(503, "storage_unavailable")
             self.reply(decision.status, decision.reason)
 
     return Server(("127.0.0.1", port), Handler)
 
 
 if __name__ == "__main__":
-    print("Synthetic experiment server: http://127.0.0.1:8080/execute", flush=True)
-    with make_server(Policy(), 8080) as server:
-        server.serve_forever()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--port", type=int, default=8080)
+    parser.add_argument("--database", type=Path, help="Persist admission and actions in this SQLite file")
+    args = parser.parse_args()
+    if not 1 <= args.port <= 65535:
+        parser.error("port must be between 1 and 65535")
+    ledger = SQLiteLedger(args.database) if args.database is not None else None
+    with make_server(Policy(ledger=ledger), args.port) as server:
+        print(f"Local experiment server: http://127.0.0.1:{server.server_port}/execute", flush=True)
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            pass

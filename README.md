@@ -2,7 +2,7 @@
 
 Small Python lab for testing signed requests, replay checks and device permissions over HTTP. The main comparison is simple: send the same request eight times at once, then count how many actions the server records.
 
-The server only records actions in a list. It doesn't contact a device, fetch a URL or send an MQTT message.
+The default server records actions in a list. An optional SQLite journal keeps admission state and recorded actions across restarts and shares them between local server processes. Neither mode contacts a device, fetches a URL or sends an MQTT message.
 
 ## Run the experiments
 
@@ -12,9 +12,9 @@ No packages to install. Use Python 3.10 or newer:
 python run_experiments.py
 ```
 
-The default run should report `60/60 scenarios matched` and write `results/latest.json` and `results/latest.md`. The committed runs are from Windows (Python 3.12.2) and Ubuntu under WSL (Python 3.14.4). Each JSON report records the environment and hashes of the three experiment source files.
+The default run should report `61/61 scenarios matched` and write `results/latest.json` and `results/latest.md`. The committed runs are from Windows (Python 3.12.2) and Ubuntu under WSL (Python 3.14.4). Each JSON report records the environment and hashes of the four experiment source files.
 
-`60/60` means the observations matched the expected results. Some cases deliberately remove a check, and one demonstrates replay after a restart. It isn't a security score.
+`61/61` means the observations matched the expected results. Some cases deliberately remove a check, and one demonstrates replay after a restart. It isn't a security score.
 
 ## Try a request by hand
 
@@ -42,6 +42,27 @@ python send_request.py --resource device-b
 
 The client exits with 0 for an accepted request, 1 for a rejection and 2 for a connection/response error. Keys are public test fixtures in `policy.py`. Both server and client connect only over loopback; the request's `url` field is just input to the policy check.
 
+## Keep state across restarts
+
+Stop the default server, then start it with a database file:
+
+```sh
+python server.py --database .state/lab.sqlite3
+```
+
+Run the same two client commands above. Now restarting the server with that same file keeps rejecting a reused ID while its replay entry is live. Starting another server with `--port 8081` and the same database shares the replay and rate limits.
+
+The persistence experiment handles temporary databases, two child server processes and crash injection:
+
+```sh
+python run_persistence.py
+# 10/10 persistence scenarios matched
+```
+
+It checks a crash immediately before commit and immediately after commit but before a response. The former leaves no action, so retry succeeds. The latter leaves one action, so retry is rejected. A locked database returns `503 storage_unavailable`; there is no fallback to an empty memory cache.
+
+See the measured [Windows](results/persistence/windows.md) and [Linux](results/persistence/linux.md) outcomes. These tests cover local database rows, not an external action committed in another system.
+
 ## Results worth looking at
 
 | Case | With checks | Check removed |
@@ -49,7 +70,8 @@ The client exits with 0 for an accepted request, 1 for a rejection and 2 for a c
 | Eight copies arriving together | 1 recorded action | 8 without replay and rate checks |
 | Alice targeting Bob's device | Rejected | Recorded without scope check |
 | Four requests inside two seconds | 3 recorded actions | 4 without rate check |
-| Same request after restart | Accepted again | Replay state is lost |
+| Same request after restart, in-memory mode | Accepted again | Replay state is lost |
+| Same request after restart, SQLite mode | Rejected while nonce is live | State kept in the database |
 
 The concurrent comparison runs ten times. A barrier starts the clients together, but the OS still chooses the actual schedule. The seed changes dispatch order, not thread interleavings.
 
@@ -57,8 +79,8 @@ See the [Windows results](results/windows.md), [Linux results](results/linux.md)
 
 ## Limits
 
-This only tests a single service process and an in-memory recording sink. It doesn't test durable delivery, TLS, DNS rebinding or redirects. `http.server` is used as a local experiment transport, not a production deployment.
+The SQLite mode tests two processes on one host, with a local database file and a 61-second replay entry lifetime. It retains action rows, so the file grows with the experiment. This does not establish exactly-once delivery to an external service, power-loss recovery, network-filesystem safety, TLS, DNS rebinding or redirect handling. `http.server` is a local experiment transport, not a production deployment.
 
-A Dockerfile is included, but its build and execution are unverified because the preparation host's Docker engine was unavailable. Native Windows and WSL runs were checked.
+GitHub Actions runs both experiments on Windows and Linux, stores their result files for seven days, and smoke-tests both runners in Docker on Linux. Action versions are pinned by commit. The [workflow](.github/workflows/experiments.yml) is the source for these checks; inspect the [run results](https://github.com/Harshyadav442277/research-security-lab/actions) for their actual status. The preparation host's Docker engine was unavailable.
 
 Implementation and documentation were prepared with AI assistance. This is a learning project, with no claim of research novelty or independent reproduction of the linked papers.

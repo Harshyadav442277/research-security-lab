@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "python": "3.12.2",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "sqlite_version": "3.43.1",
+  "logical_time": 1800000000,
+  "source_sha256": {
+    "policy.py": "8eab4917aaf531c831e7a1fde52321d8f18f7e6f37edacaedbdf8118b104ba51",
+    "server.py": "6767544e01ee24dcec80533cf1e1309b779745d64e03b4484724b27d75171af0",
+    "ledger.py": "3ccc4c2158e3a507855fd06e9270fdb38a2a6553c9c999440eae36b6321e8d8a",
+    "run_experiments.py": "0c59e44a869b748f4e2a0a3f44028fcea54678c55cb635d5d4248d81a20019d9",
+    "run_persistence.py": "93d612580ea9d507a74c9738ae63948b93a2276d4c05fd2a94fa2d5c089f34e3"
+  },
+  "passed": 10,
+  "total": 10,
+  "scenarios": [
+    {
+      "name": "restart_keeps_replay_state",
+      "observed": {
+        "200:accepted": 1,
+        "409:replay": 1
+      },
+      "expected": {
+        "200:accepted": 1,
+        "409:replay": 1
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "same_id_changed_body",
+      "observed": {
+        "200:accepted": 1,
+        "409:replay": 1,
+        "stored:original": 1
+      },
+      "expected": {
+        "200:accepted": 1,
+        "409:replay": 1,
+        "stored:original": 1
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "rate_restart_recovery_and_principals",
+      "observed": {
+        "200:accepted": 5,
+        "429:rate": 2
+      },
+      "expected": {
+        "200:accepted": 5,
+        "429:rate": 2
+      },
+      "effects": 5,
+      "expected_effects": 5,
+      "passed": true
+    },
+    {
+      "name": "nonce_retention_and_id_reuse",
+      "observed": {
+        "200:accepted": 2,
+        "409:replay": 1
+      },
+      "expected": {
+        "200:accepted": 2,
+        "409:replay": 1
+      },
+      "effects": 2,
+      "expected_effects": 2,
+      "passed": true
+    },
+    {
+      "name": "two_process_duplicate",
+      "observed": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "expected": {
+        "200:accepted": 1,
+        "409:replay": 7
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "two_process_rate",
+      "observed": {
+        "200:accepted": 3,
+        "429:rate": 5
+      },
+      "expected": {
+        "200:accepted": 3,
+        "429:rate": 5
+      },
+      "effects": 3,
+      "expected_effects": 3,
+      "passed": true
+    },
+    {
+      "name": "crash_before_commit",
+      "observed": {
+        "200:accepted": 1,
+        "actions_before_retry:0": 1,
+        "child_exit:73": 1
+      },
+      "expected": {
+        "200:accepted": 1,
+        "actions_before_retry:0": 1,
+        "child_exit:73": 1
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "crash_after_commit",
+      "observed": {
+        "409:replay": 1,
+        "actions_before_retry:1": 1,
+        "child_exit:74": 1
+      },
+      "expected": {
+        "409:replay": 1,
+        "actions_before_retry:1": 1,
+        "child_exit:74": 1
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "locked_database_no_memory_fallback",
+      "observed": {
+        "200:accepted": 1,
+        "503:storage_unavailable": 1
+      },
+      "expected": {
+        "200:accepted": 1,
+        "503:storage_unavailable": 1
+      },
+      "effects": 1,
+      "expected_effects": 1,
+      "passed": true
+    },
+    {
+      "name": "rejections_do_not_write",
+      "observed": {
+        "400:schema": 1,
+        "401:authentication": 1,
+        "403:scope": 1
+      },
+      "expected": {
+        "400:schema": 1,
+        "401:authentication": 1,
+        "403:scope": 1
+      },
+      "effects": 0,
+      "expected_effects": 0,
+      "passed": true
+    }
+  ]
+}
